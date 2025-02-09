@@ -42,6 +42,6 @@ export async function initHtmlServer(port: number | string) {
 			return response
 		},
 		development: true,
-		port: port
+		port: port,
 	})
 }

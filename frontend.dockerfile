@@ -1,5 +1,8 @@
 FROM oven/bun:latest AS build
 
+# TODO: remove this is for testing
+ENV GAME_SERVER_URL=https://card-engine-backend-production.up.railway.app
+
 WORKDIR /app
 
 COPY package.json ./

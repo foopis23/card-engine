@@ -1,12 +1,14 @@
 import type { Commands, Messages } from './commands';
 import { TEventEmitter } from '../../util/TypedEmitter';
-import type { GameSocket } from './game-server';
 
 export type Component = {
 	value: any
 	lastWrite: number
 }
-export type Entity = Map<string, Component>
+export type Entity = {
+	owner: string
+	components: Map<string, Component>
+}
 
 // https://www.figma.com/blog/how-figmas-multiplayer-technology-works/
 export class Room implements Commands {
@@ -18,10 +20,22 @@ export class Room implements Commands {
 		this.events = new TEventEmitter();
 	}
 
+	setOwner(entityId: string, playerId: string): void {
+		const entity = this.entities.get(entityId);
+		if (!entity) return;
+		if (entity.owner === playerId) return;
+
+		entity.owner = playerId;
+		this.events.emit('ownerSet', entityId, playerId);
+	}
+
 	/** Explicit action, no CRDT */
-	spawnEntity(entityId: string) {
-		this.entities.set(entityId, new Map());
-		this.events.emit('entitySpawned', entityId);
+	spawnEntity(entityId: string, playerId: string) {
+		this.entities.set(entityId, {
+			owner: playerId,
+			components: new Map()
+		});
+		this.events.emit('entitySpawned', entityId, playerId);
 	}
 
 	/** Explicit action, no CRDT */
@@ -37,13 +51,13 @@ export class Room implements Commands {
 			return;
 		}
 
-		const component = entity.get(componentName);
+		const component = entity.components.get(componentName);
 
 		if (!component) { // if the component doesn't exist, just set it
-			entity.set(componentName, { value, lastWrite: timestamp });
+			entity.components.set(componentName, { value, lastWrite: timestamp });
 			this.events.emit('componentSet', entityId, componentName, value);
 		} else if (component.lastWrite < timestamp) { // if component does exist, use last write to determine if we should update
-			entity.set(componentName, { value, lastWrite: timestamp });
+			entity.components.set(componentName, { value, lastWrite: timestamp });
 			this.events.emit('componentSet', entityId, componentName, value);
 		}
 	}

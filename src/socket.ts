@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import type { ClientToServerEvents, ServerToClientEvents } from '../server/game/game-server';
 
+
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = 'http://localhost:3001';
 
@@ -18,4 +19,4 @@ socket.on('disconnect', () => {
 
 socket.on('entitySpawned', (entityId: string) => {
 	console.log('entitySpawned', entityId);
-});
+})

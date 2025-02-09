@@ -1,5 +1,4 @@
 import { Server, Socket } from "socket.io";
-import { Server as HttpServer } from 'http'
 import { Room } from "./room";
 import { globalLogger } from "../logger";
 import type { Logger } from "pino";
@@ -20,11 +19,11 @@ export interface SocketData {
 	logger: Logger;
 }
 
-export type GameSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
+export type GameServerSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 export type GameServer = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
 export function initGameServer(port: number) {
-	const logger = globalLogger.child({ module: 'game-server' });
+	const logger = globalLogger.child({ module: 'ws' });
 
 	const server: GameServer = new Server({
 		cors: {
@@ -50,6 +49,10 @@ export function initGameServer(port: number) {
 		server.to(roomName).emit('entityDestroyed', ...args);
 	});
 
+	room.events.on('ownerSet', (...args) => {
+		server.to(roomName).emit('ownerSet', ...args);
+	});
+
 	server.on('connection', (client) => {
 		// init client socket
 		client.data.memberId = crypto.randomUUID();
@@ -62,6 +65,7 @@ export function initGameServer(port: number) {
 		client.on('spawnEntity', room.spawnEntity.bind(room));
 		client.on('destroyEntity', room.destroyEntity.bind(room));
 		client.on('setComponent', room.setComponent.bind(room));
+		client.on('setOwner', room.setOwner.bind(room));
 
 		// handle socket events 
 		client.on('disconnect', () => {

@@ -2,7 +2,7 @@ import { globalLogger } from '../logger';
 import indexHtml from '../../src/index.html';
 
 export async function initHtmlServer(port: number | string) {
-	const logger = globalLogger.child({ module: 'html-server' });
+	const logger = globalLogger.child({ module: 'http' });
 	const BASE_PATH = "./public";
 
 	const staticFileCacheHeader = process.env.NODE_ENV === "development" ? {

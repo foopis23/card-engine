@@ -8,6 +8,9 @@ import { ACTIONS } from "../../input/Actions";
 import CardMaterial from "./CardMaterial";
 import { useLua } from "../../hooks/lua";
 import { LuaEngine } from "wasmoon";
+import { getUserId } from '../../util/userId';
+import { socket } from '../../socket';
+import { useFixedTick } from '../../hooks/useFixedTick';
 
 // export type CardProps = {
 // 	name?: string,
@@ -22,41 +25,56 @@ import { LuaEngine } from "wasmoon";
 
 export type CardProps = {
 	uuid: string,
+	initialOwner: string,
+	destroy: () => void
 }
 
 const liftHeight = 0.25;
 
 export function Card(props: CardProps) {
-	const { uuid } = props;
-	console.log(uuid);
-
+	const { uuid, destroy, initialOwner } = props;
 	const body = useRef<RapierRigidBody | null>(null);
 	const three = useThree();
 
-	const [selected, setSelected] = useState<boolean>(false);
-	const [flipped, setFlipped] = useState<boolean>(false);
-	const [hovering, setHovering] = useState<boolean>(false);
+	const selected = useRef<boolean>(false);
+	const flipped = useRef<boolean>(false);
+	const hovering = useRef<boolean>(false);
+	const owner = useRef(initialOwner);
+	const targetPos = useRef<THREE.Vector3 | null>(null);
 	const [onKeyboardEvent] = useKeyboardControls<ACTIONS>();
 
 	//#region Base Actions
+	function setOwner(playerId: string) {
+		owner.current = playerId;
+		socket.emit('setOwner', uuid, playerId);
+	}
+
 	const flip = useCallback(() => {
-		setFlipped((flipped) => !flipped);
+		setOwner(getUserId());
+		flipped.current = !flipped.current;
 	}, [])
 
 	const grab = useCallback(() => {
-		setSelected(true);
+		setOwner(getUserId());
+		selected.current = true;
+		body.current?.setGravityScale(0, true);
 	}, [])
 
 	const release = useCallback(() => {
-		setSelected(false);
+		setOwner(getUserId());
+		selected.current = false;
+		body.current?.setGravityScale(1, true);
+		targetPos.current = null;
 	}, [])
 
 	const toggleGrab = useCallback(() => {
-		setSelected((selected) => !selected);
+		setOwner(getUserId());
+		selected.current = !selected.current;
 	}, [])
 
 	const setPos = useCallback((pos: [number, number, number]) => {
 		if (!body.current) return;
+		setOwner(getUserId());
 		body.current.setTranslation(new THREE.Vector3(...pos), true)
 	}, [])
 
@@ -113,28 +131,59 @@ export function Card(props: CardProps) {
 		release();
 	}, [release, userScript]);
 
+	const doDelete = useCallback(() => {
+		if (userScript) {
+			const hook: () => boolean | undefined | null = userScript.global.get("onDelete");
+			if (hook) {
+				const result = hook()
+				if (result === false) {
+					return;
+				}
+			}
+		}
+
+		console.log("Destroying card", uuid);
+		destroy();
+	}, [props, userScript]);
+
 	const doToggleGrab = useCallback(() => {
-		if (selected) {
+		if (selected.current) {
 			doRelease();
 		} else {
 			doGrab();
 		}
-	}, [doGrab, doRelease, selected]);
+	}, [doGrab, doRelease]);
 
 	//#region Init
-	useEffect(() => {
-		return onKeyboardEvent(
+	useEffect(() => { // keyboard input
+		const cleanupFlip = onKeyboardEvent(
 			(state) => state.flip,
 			(pressed) => {
-				if (!hovering) return;
+				if (!hovering.current) return;
 
 				if (pressed) {
 					doFlip();
 				}
 			})
+
+		const cleanupDelete = onKeyboardEvent(
+			(state) => state.delete,
+			(pressed) => {
+				if (!hovering.current) return;
+
+				if (pressed) {
+					doDelete();
+				}
+			}
+		)
+
+		return () => {
+			cleanupFlip();
+			cleanupDelete();
+		}
 	}, [doFlip, onKeyboardEvent, hovering])
 
-	useEffect(() => {
+	useEffect(() => { // body setup
 		if (!body.current) {
 			console.warn("No body ref");
 			return;
@@ -144,60 +193,108 @@ export function Card(props: CardProps) {
 		body.current.setEnabledRotations(false, false, false, false);
 	}, [])
 
-	useEffect(() => {
-		userScript?.global.set("flipped", flipped);
-		userScript?.global.set("selected", selected);
-		userScript?.global.set("hovering", hovering);
-	}, [selected, hovering, flipped, userScript])
+	useEffect(() => { // userScript setup
+		userScript?.global.set("flipped", flipped.current);
+		userScript?.global.set("selected", selected.current);
+		userScript?.global.set("hovering", hovering.current);
+	}, [userScript])
 
+	useEffect(() => { // networking
+		function handleComponentSet(entityId: string, componentName: string, value: any) {
+			if (entityId !== uuid) return;
+			if (owner.current === getUserId()) return; // don't update if we're the owner
 
-	//#region Tick
-	useFrame(() => {
-		if (body.current === null) return;
+			if (componentName === "position") {
+				targetPos.current = new THREE.Vector3(...value);
+			}
 
-		userScript?.global.set("position", Object.values(body.current.translation()));
-		userScript?.global.set("rotation", Object.values(body.current.rotation()));
+			if (componentName === "flipped") {
+				flipped.current = value;
+			}
+		}
 
+		function handleOwnerSet(entityId: string, playerId: string) {
+			if (entityId !== uuid) return;
+			owner.current = playerId;
+		}
+
+		socket.on('componentSet', handleComponentSet)
+		socket.on('ownerSet', handleOwnerSet)
+
+		return () => {
+			socket.off('componentSet', handleComponentSet)
+			socket.off('ownerSet', handleOwnerSet)
+		}
+	}, [])
+
+	//#region Movement
+
+	const rotateTowardsTargetRotation = useCallback(() => {
+		const phyBody = body.current;
+		if (phyBody === null) return;
 		const currentRot = new THREE.Euler().setFromQuaternion(
 			new THREE.Quaternion(
-				...Object.values(body.current.rotation())
+				...Object.values(phyBody.rotation())
 			)
 		);
-		const targetRot = flipped ? Math.PI : 0;
+		const targetRot = flipped.current ? Math.PI : 0;
 		const newRot = new THREE.Euler(
 			0,
 			0,
 			currentRot.z + (targetRot - currentRot.z) * 0.2
 		);
-
 		const newQuat = new THREE.Quaternion().setFromEuler(newRot);
-
-		body.current.setRotation({
+		phyBody.setRotation({
 			x: newQuat.x,
 			y: newQuat.y,
 			z: newQuat.z,
 			w: newQuat.w
 		}, true);
+	}, []);
+
+	const moveTowardsTargetPosition = useCallback((delta: number) => {
+		const phyBody = body.current;
+		if (phyBody === null) return;
+		if (targetPos.current === null) return;
+
+		const pos = new THREE.Vector3(...Object.values(phyBody.translation()));
+		const newPos = pos.lerp(targetPos.current, 10 * delta);
+		phyBody.setTranslation(newPos, true)
+	}, []);
 
 
-		if (!selected) {
-			body.current.setGravityScale(1, false);
-			return
+	//#region Tick
+	useFrame((_, delta) => {
+		const phyBody = body.current;
+		if (phyBody === null) return;
+
+		userScript?.global.set("position", Object.values(phyBody.translation()));
+		userScript?.global.set("rotation", Object.values(phyBody.rotation()));
+
+		moveTowardsTargetPosition(delta);
+		rotateTowardsTargetRotation();
+
+		if (owner.current === getUserId()) {
+			if (selected.current) {
+				const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // TODO: this assumes the "table top" is at y=0
+				const raycaster = new THREE.Raycaster();
+				const pointer = three.pointer;
+				raycaster.setFromCamera(pointer, three.camera);
+				const intersectionPoint = new THREE.Vector3();
+				if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
+					targetPos.current = intersectionPoint.add(new THREE.Vector3(0, liftHeight, 0))
+				}
+			}
 		}
+	})
 
-		body.current.setGravityScale(0, false);
+	useFixedTick(20, (_, delta) => {
+		const phyBody = body.current;
+		if (owner.current !== getUserId()) return;
+		if (phyBody === null) return;
 
-		const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // TODO: this assumes the "table top" is at y=0
-
-		const raycaster = new THREE.Raycaster();
-		const pointer = three.pointer;
-		raycaster.setFromCamera(pointer, three.camera);
-		const intersectionPoint = new THREE.Vector3();
-		if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
-			const pos = new THREE.Vector3(...Object.values(body.current.translation()));
-			const newPos = pos.lerp(intersectionPoint.add(new THREE.Vector3(0, liftHeight, 0)), 0.3);
-			body.current.setTranslation(newPos, true)
-		}
+		socket.emit('setComponent', uuid, 'position', Object.values(phyBody.translation()), Date.now());
+		socket.emit('setComponent', uuid, 'flipped', flipped.current, Date.now());
 	})
 
 	//#region Events
@@ -206,11 +303,11 @@ export function Card(props: CardProps) {
 	}
 
 	function handleOver() {
-		setHovering(true);
+		hovering.current = true;
 	}
 
 	function handleExit() {
-		setHovering(false);
+		hovering.current = false;
 	}
 
 	return (

@@ -8,6 +8,7 @@
         "@react-three/fiber": "^8.17.12",
         "@react-three/rapier": "^1.5.0",
         "bun-plugin-tailwind": "^0.0.14",
+        "directed": "^0.1.1",
         "koota": "^0.1.12",
         "pino": "^9.6.0",
         "react": "^18.0.0",
@@ -127,6 +128,8 @@
     "debug": ["debug@4.3.7", "", { "dependencies": { "ms": "^2.1.3" } }, "sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ=="],
 
     "detect-gpu": ["detect-gpu@5.0.66", "", { "dependencies": { "webgl-constants": "^1.1.1" } }, "sha512-X6b8QYU3EeVEsr5xROLZVdqwoBe6Yg1z4SnJujRBh7BfWd+48FTsMwIqQFUiQSKdkScebtpDwueHZEkAalkbhg=="],
+
+    "directed": ["directed@0.1.1", "", { "peerDependencies": { "@react-three/fiber": "^8.17.5", "react": "^18.3.1" } }, "sha512-oNUIZ4EP/TF+hi+IR1417iWzjjNjDuMEtYlpe05TWu6gX5+5k8J2OdoYV8+2RyncsympfAAeDncRuPAN8gPaeg=="],
 
     "draco3d": ["draco3d@1.5.7", "", {}, "sha512-m6WCKt/erDXcw+70IJXnG7M3awwQPAsZvJGX5zY7beBqpELw6RDGkYVU0W43AFxye4pDZ5i2Lbyc/NNGqwjUVQ=="],
 

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun --env-file=.env index.ts",
-    "build": "bun build ./src/index.html --env-file=.env --env=inline --outdir ./dist",
+    "build": "bun ./build.ts",
     "dev": "bun --env-file=.env --watch index.ts"
   },
   "devDependencies": {

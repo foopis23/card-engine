@@ -3,7 +3,7 @@ import type { ClientToServerEvents, ServerToClientEvents } from '../server/game/
 
 
 // "undefined" means the URL will be computed from the `window.location` object
-const URL = 'http://localhost:3001';
+const URL = process.env.GAME_SERVER_URL ?? 'http://localhost:3001';
 
 export type ClientGameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 

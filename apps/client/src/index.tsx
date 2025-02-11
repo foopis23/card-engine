@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import '../socket';
+import './socket';
 import { getUserId } from "./util/userId";
 
 document.addEventListener("DOMContentLoaded", () => {

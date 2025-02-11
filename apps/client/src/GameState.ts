@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { socket } from '../socket'
+import { socket } from './socket'
 import { useEffect } from 'react'
 import { getUserId } from './util/userId'
 

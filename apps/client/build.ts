@@ -1,6 +1,7 @@
 import tailwind from "bun-plugin-tailwind";
 import fs from "fs/promises";
 import path from "path";
+import envPlugin from "./env-plugin";
 
 async function build() {
 	// clean up
@@ -10,7 +11,7 @@ async function build() {
 	await Bun.build({
 		entrypoints: ["./src/index.html"],
 		outdir: "./dist/",
-		plugins: [tailwind],
+		plugins: [tailwind, envPlugin],
 		env: 'inline',
 	})
 

@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { Room } from "./room";
-import { globalLogger } from "../logger";
+import { globalLogger } from "../util/logger";
 import type { Logger } from "pino";
 import type { Commands, Messages } from "./commands";
 
@@ -73,7 +73,7 @@ export function initGameServer(port: number) {
 		});
 	});
 
-	return server.listen(port)
+	server.listen(port)
 }
 
 

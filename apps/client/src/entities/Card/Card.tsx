@@ -9,7 +9,7 @@ import CardMaterial from "./CardMaterial";
 import { useLua } from "../../hooks/lua";
 import { LuaEngine } from "wasmoon";
 import { getUserId } from '../../util/userId';
-import { socket } from '../../socket';
+import { socket } from '../../../socket';
 import { useFixedTick } from '../../hooks/useFixedTick';
 
 // export type CardProps = {

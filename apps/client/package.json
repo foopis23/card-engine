@@ -1,0 +1,40 @@
+{
+  "name": "client",
+  "module": "index.tsx",
+  "type": "module",
+  "scripts": {
+    "dev": "bun ./dev.ts",
+    "build": "bun ./build.ts"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.121.4",
+    "@react-three/fiber": "^8.17.12",
+    "@react-three/rapier": "^1.5.0",
+    "bun-plugin-tailwind": "^0.0.14",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "socket.io-client": "^4.8.1",
+    "three": "^0.172.0",
+    "wasmoon": "^1.16.0",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react-dom": "^18.3.5",
+    "@types/react": "^18.3.18"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "patchedDependencies": {
+    "wasmoon@1.16.0": "apps/client/patches/wasmoon@1.16.0.patch"
+  },
+  "browser": {
+    "path": false,
+    "fs": false,
+    "child_process": false,
+    "crypto": false,
+    "url": false,
+    "module": false
+  }
+}

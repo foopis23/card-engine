@@ -1,0 +1,2 @@
+[serve.static]
+plugins = ["./env-plugin.ts", "bun-plugin-tailwind"]

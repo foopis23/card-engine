@@ -1,45 +1,14 @@
 {
   "name": "card-engine-fiber-full-stack",
-  "module": "index.ts",
-  "type": "module",
   "scripts": {
-    "start": "bun --env-file=.env index.ts",
-    "build": "bun ./build.ts",
-    "dev": "bun --env-file=.env --watch index.ts"
+    "build": "turbo run build",
+    "dev": "turbo run dev"
   },
+  "workspaces": [
+    "apps/*"
+  ],
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/react-dom": "^18.3.5",
-    "@types/react": "^18.3.18"
+    "turbo": "^2.4.1"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@react-three/drei": "^9.121.4",
-    "@react-three/fiber": "^8.17.12",
-    "@react-three/rapier": "^1.5.0",
-    "bun-plugin-tailwind": "^0.0.14",
-    "directed": "^0.1.1",
-    "koota": "^0.1.12",
-    "pino": "^9.6.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
-    "three": "^0.172.0",
-    "wasmoon": "^1.16.0",
-    "zustand": "^5.0.3"
-  },
-  "browser": {
-    "path": false,
-    "fs": false,
-    "child_process": false,
-    "crypto": false,
-    "url": false,
-    "module": false
-  },
-  "patchedDependencies": {
-    "wasmoon@1.16.0": "patches/wasmoon@1.16.0.patch"
-  }
+  "packageManager": "bun@1.2.0"
 }

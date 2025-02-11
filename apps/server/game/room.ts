@@ -1,5 +1,5 @@
 import type { Commands, Messages } from './commands';
-import { TEventEmitter } from '../../util/TypedEmitter';
+import { TEventEmitter } from '../util/TypedEmitter';
 
 export type Component = {
 	value: any

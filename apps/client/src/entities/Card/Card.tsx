@@ -216,6 +216,11 @@ export function Card(props: CardProps) {
 		function handleOwnerSet(entityId: string, playerId: string) {
 			if (entityId !== uuid) return;
 			owner.current = playerId;
+			
+			//? I don't think this is great default behavior, but its easy for now
+			if (selected.current) {
+				release(); // skip the hook
+			}
 		}
 
 		socket.on('componentSet', handleComponentSet)

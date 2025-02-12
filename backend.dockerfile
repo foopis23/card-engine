@@ -7,4 +7,4 @@ COPY ./apps/server ./
 
 RUN bun install
 
-CMD ["bun", "start"]
+CMD ["bun", "dev"]

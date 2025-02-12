@@ -1,17 +1,13 @@
 FROM oven/bun
 
-RUN apt-get update
-RUN apt-get -y install nginx
-RUN nginx -v
-
-COPY ./startup.sh /startup.sh
-
 WORKDIR /app
-COPY package.json ./
-COPY bun.lock ./
-COPY . ./
+
+COPY ./ ./
 RUN bun install
 
-EXPOSE 80
+WORKDIR /app/apps/client
 
-CMD ["/startup.sh"]
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["bun", "dev"]

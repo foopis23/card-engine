@@ -12,7 +12,6 @@ async function build() {
 		entrypoints: ["./src/index.html"],
 		outdir: "./dist/",
 		plugins: [tailwind, envPlugin],
-		env: 'inline',
 	})
 
 	// copy all the files in public to the dist folder

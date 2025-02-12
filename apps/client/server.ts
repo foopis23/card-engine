@@ -15,7 +15,6 @@ Bun.serve({
 	async fetch(req, serv) {
 		const url = new URL(req.url);
 		let response: Response = new Response(null, { status: 404 });
-		const reqId = crypto.randomUUID();
 
 		// users are going to define the files that are loaded so maybe even like supabase or something??
 		try {

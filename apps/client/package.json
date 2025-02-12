@@ -3,7 +3,8 @@
   "module": "index.tsx",
   "type": "module",
   "scripts": {
-    "dev": "bun ./dev.ts",
+    "start": "bun ./server.ts",
+    "dev": "bun ./server.ts",
     "build": "bun ./build.ts"
   },
   "dependencies": {

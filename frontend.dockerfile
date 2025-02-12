@@ -1,19 +1,17 @@
-FROM oven/bun:latest AS build
+FROM oven/bun
 
-# TODO: remove this is for testing
-ARG GAME_SERVER_URL=https://card-engine-backend-production.up.railway.app
-ENV GAME_SERVER_URL=$GAME_SERVER_URL
+RUN apt-get update
+RUN apt-get -y install nginx
+RUN nginx -v
+
+COPY ./startup.sh /startup.sh
 
 WORKDIR /app
-
 COPY package.json ./
 COPY bun.lock ./
 COPY . ./
-
 RUN bun install
-RUN bun run build
 
-FROM nginx:alpine AS production
-
-COPY --from=build /app/apps/client/dist /usr/share/nginx/html
 EXPOSE 80
+
+CMD ["/startup.sh"]

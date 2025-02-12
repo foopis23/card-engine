@@ -1,7 +1,8 @@
 FROM oven/bun:latest AS build
 
 # TODO: remove this is for testing
-ENV GAME_SERVER_URL=https://card-engine-backend-production.up.railway.app
+ARG GAME_SERVER_URL=https://card-engine-backend-production.up.railway.app
+ENV GAME_SERVER_URL=$GAME_SERVER_URL
 
 WORKDIR /app
 

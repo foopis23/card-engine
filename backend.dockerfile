@@ -1,10 +1,13 @@
-FROM oven/bun:latest
+FROM oven/bun
 
-# as of right now, the server doesn't need anything from the client so we don't
-# need client code in server image.. if that changes.. then perish
-COPY ./apps/server/package.json ./
-COPY ./apps/server ./
+WORKDIR /app
 
+COPY ./ ./
 RUN bun install
 
-CMD ["bun", "dev"]
+WORKDIR /app/apps/server
+
+ENV PORT=3001
+EXPOSE 3001
+
+CMD ["bun", "start"]

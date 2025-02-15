@@ -50,7 +50,7 @@ export function Card2(props: CardProps) {
 			(state) => state.flip,
 			(pressed) => {
 				const held = entity.get(Holdable)
-				if (!held) return;
+				if (!held?.held) return;
 				if (held.user !== getUserId()) return;
 
 				if (pressed) {

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun ./server.ts",
     "dev": "bun ./server.ts",
+    "typecheck": "tsc --noEmit",
     "build": "bun ./build.ts",
     "format": "prettier ./src --write",
     "lint": "eslint ./src/**.{ts,tsx}"

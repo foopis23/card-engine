@@ -5,6 +5,7 @@
   "scripts": {
     "start": "bun ./src/index.ts",
     "dev": "bun ./src/index.ts",
+    "typecheck": "tsc --noEmit",
     "format": "prettier ./src --write",
     "lint": "eslint ./src/**"
   },

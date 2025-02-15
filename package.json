@@ -2,8 +2,9 @@
   "name": "card-engine-fiber-full-stack",
   "scripts": {
     "start": "turbo run start",
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
     "format": "turbo run format",
     "lint": "turbo run lint"
   },

@@ -19,7 +19,7 @@ export class Room implements Commands {
 		this.entities = new Map();
 		this.events = new TEventEmitter();
 	}
-
+	
 	setOwner(entityId: string, playerId: string): void {
 		const entity = this.entities.get(entityId);
 		if (!entity) return;
@@ -63,8 +63,6 @@ export class Room implements Commands {
 	}
 
 	getEntities() {
-		return {
-			entities: Object.fromEntries(this.entities.entries())
-		}
+		return Object.fromEntries(this.entities.entries().toArray());
 	}
 }

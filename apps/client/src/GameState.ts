@@ -17,6 +17,7 @@ export const useGameStateStore = create<{
 	}))
 }))
 
+let ready = false
 export const useSpawning = () => {
 	const _spawnCard = useGameStateStore((state) => state.spawnCard)
 	const _despawnCard = useGameStateStore((state) => state.despawnCard)
@@ -29,9 +30,23 @@ export const useSpawning = () => {
 		_despawnCard(entityId)
 	}
 
+	const handleAllEntities = (entities: { [k: string]: { owner: string, components: { [k: string]: any } } }) => {
+		console.log('allEntities', entities)
+		Object.entries(entities).forEach(([entityId, { owner }]) => {
+			_spawnCard(entityId, owner)
+		})
+	}
+
 	useEffect(() => {
+
 		socket.on('entitySpawned', handleEntitiySpawned)
 		socket.on('entityDestroyed', handleEntityDespawned)
+		socket.on('allEntities', handleAllEntities)
+
+		if (!ready) { // do check this only runs once
+			socket.emit('ready')
+			ready = true
+		}
 
 		return () => {
 			socket.off('entitySpawned', handleEntitiySpawned)

@@ -5,10 +5,11 @@ import type { Logger } from "pino";
 import type { Commands, Messages } from "./commands";
 
 export interface ServerToClientEvents extends Messages {
-	allEntities: (entities: { [key: string]: { [key: string]: { value: any, timestamp: number } } }) => void;
 }
 
-export interface ClientToServerEvents extends Commands { }
+export interface ClientToServerEvents extends Commands {
+	ready: () => void,
+}
 
 export interface InterServerEvents {
 
@@ -66,6 +67,9 @@ export function initGameServer(port: number) {
 		client.on('destroyEntity', room.destroyEntity.bind(room));
 		client.on('setComponent', room.setComponent.bind(room));
 		client.on('setOwner', room.setOwner.bind(room));
+		client.on('ready', () => {
+			client.emit('allEntities', room.getEntities());
+		});
 
 		// handle socket events 
 		client.on('disconnect', () => {

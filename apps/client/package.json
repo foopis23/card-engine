@@ -12,6 +12,8 @@
     "@react-three/fiber": "^8.17.12",
     "@react-three/rapier": "^1.5.0",
     "bun-plugin-tailwind": "^0.0.14",
+    "directed": "^0.1.4",
+    "koota": "^0.1.12",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "socket.io-client": "^4.8.1",

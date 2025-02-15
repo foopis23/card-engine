@@ -5,7 +5,9 @@
   "scripts": {
     "start": "bun ./server.ts",
     "dev": "bun ./server.ts",
-    "build": "bun ./build.ts"
+    "build": "bun ./build.ts",
+    "format": "prettier ./src --write",
+    "lint": "eslint ./src/**.{ts,tsx}"
   },
   "dependencies": {
     "@react-three/drei": "^9.121.4",
@@ -13,7 +15,9 @@
     "@react-three/rapier": "^1.5.0",
     "bun-plugin-tailwind": "^0.0.14",
     "directed": "^0.1.4",
+    "eslint": "^9.20.1",
     "koota": "^0.1.12",
+    "prettier": "^3.5.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "socket.io-client": "^4.8.1",
@@ -24,7 +28,8 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react-dom": "^18.3.5",
-    "@types/react": "^18.3.18"
+    "@types/react": "^18.3.18",
+    "eslint-config": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

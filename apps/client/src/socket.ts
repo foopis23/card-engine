@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
-} from "../../server/game/game-server";
+} from "../../server/src/game/game-server";
 
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = process.env.GAME_SERVER_URL;

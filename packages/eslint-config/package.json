@@ -1,0 +1,20 @@
+{
+  "name": "eslint-config",
+  "module": "index.ts",
+  "type": "module",
+  "exports": {
+    "./react": "./react.js",
+    "./server": "./server.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.15.0",
+    "typescript-eslint": "^8.24.0"
+  }
+}

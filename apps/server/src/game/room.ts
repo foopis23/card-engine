@@ -2,7 +2,7 @@ import type { Commands, Messages } from "./commands";
 import { TEventEmitter } from "../util/TypedEmitter";
 
 export type Component = {
-  value: any;
+  value: unknown;
   lastWrite: number;
 };
 export type Entity = {
@@ -48,7 +48,7 @@ export class Room implements Commands {
   setComponent(
     entityId: string,
     componentName: string,
-    value: any,
+    value: unknown,
     timestamp: number,
   ) {
     const entity = this.entities.get(entityId);

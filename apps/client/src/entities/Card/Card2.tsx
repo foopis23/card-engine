@@ -75,8 +75,8 @@ export function Card2(props: CardProps) {
         <mesh
           onClick={handleClick}
           ref={mesh}
-          castShadow
-          receiveShadow
+          castShadow={true}
+          receiveShadow={true}
           rotation={[-Math.PI / 2, 0, 0]}
         >
           <planeGeometry args={[2.5, 3.5]} />

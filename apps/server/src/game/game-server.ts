@@ -4,13 +4,13 @@ import { globalLogger } from "../util/logger";
 import type { Logger } from "pino";
 import type { Commands, Messages } from "./commands";
 
-export interface ServerToClientEvents extends Messages {}
+export type ServerToClientEvents = Messages;
 
 export interface ClientToServerEvents extends Commands {
   ready: () => void;
 }
 
-export interface InterServerEvents {}
+export type InterServerEvents = object;
 
 export interface SocketData {
   memberId: string;

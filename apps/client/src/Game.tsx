@@ -10,7 +10,6 @@ import {
   MainCamera,
   NetworkAuthority,
   Pointer,
-  RigidBodyRef,
 } from "./ecs/traits";
 import { Card2 } from "./entities/Card/Card2";
 

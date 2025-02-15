@@ -12,6 +12,10 @@
 		"dev": {
 			"persistent": true,
 			"cache": false
+		},
+		"lint": {
+		},
+		"format": {
 		}
 	}
 }

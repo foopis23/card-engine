@@ -21,7 +21,7 @@ type System = (ctx: { world: World; delta: number }) => void;
 export const flipSystem: System = ({ world }) => {
   world
     .query(NetworkAuthority, Flippable, RigidBodyRef)
-    .updateEach(([authority, flippable, body], entity) => {
+    .updateEach(([authority, flippable, body]) => {
       if (authority.user !== getUserId()) {
         return;
       }
@@ -64,7 +64,7 @@ export const holdSystem: System = ({ world }) => {
   // on held tick
   world
     .query(Holdable, NetworkAuthority, RigidBodyRef)
-    .updateEach(([holdable, authority, body], entity) => {
+    .updateEach(([holdable, authority, body]) => {
       if (holdable.user !== getUserId() || authority.user !== getUserId()) {
         return;
       }

@@ -3,7 +3,11 @@ import type { Entity } from "./room";
 export type Messages = {
   entitySpawned: (entityId: string, owner: string) => void;
   entityDestroyed: (entityId: string) => void;
-  componentSet: (entityId: string, componentName: string, value: any) => void;
+  componentSet: (
+    entityId: string,
+    componentName: string,
+    value: unknown,
+  ) => void;
   ownerSet: (entityId: string, playerId: string) => void;
   allEntities: (entities: { [k: string]: Entity }) => void;
 };

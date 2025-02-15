@@ -16,7 +16,7 @@ export const actions = createActions((world) => ({
     networkAuthority: { user: string };
     transform?: { position?: Vector3; rotation?: Quaternion };
   }) => {
-    const { networkAuthority: owner, transform } = init;
+    const { networkAuthority: owner } = init;
 
     return world.spawn(
       NetworkAuthority(owner),

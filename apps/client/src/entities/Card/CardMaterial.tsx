@@ -1,4 +1,3 @@
-import React from "react";
 import { useTexture } from "@react-three/drei";
 import { Suspense } from "react";
 import * as THREE from "three";

@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 
 type EventMap = {
-  [event: string]: (...args: any[]) => unknown;
+  [event: string]: (...args: unknown[]) => unknown;
 };
 
 export class TEventEmitter<Events extends EventMap> {

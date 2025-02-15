@@ -6,11 +6,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useActions, useQuery } from "koota/react";
 import { actions, schedule, world } from "./ecs";
 import { getUserId } from "./util/userId";
-import {
-  MainCamera,
-  NetworkAuthority,
-  Pointer,
-} from "./ecs/traits";
+import { MainCamera, NetworkAuthority, Pointer } from "./ecs/traits";
 import { Card2 } from "./entities/Card/Card2";
 
 export default function Game() {

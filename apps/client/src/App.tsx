@@ -8,7 +8,7 @@ import { world } from "./ecs";
 
 function App() {
   return (
-    <div id="canvas-container" className="h-full w-full flex">
+    <div id="canvas-container" className="flex h-full w-full">
       <WorldProvider world={world}>
         <Controls>
           <Canvas

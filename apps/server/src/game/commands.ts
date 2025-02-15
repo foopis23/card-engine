@@ -18,7 +18,7 @@ export type Commands = {
   setComponent(
     entityId: string,
     componentName: string,
-    value: any,
+    value: unknown,
     timestamp: number,
   ): void;
   setOwner(entityId: string, playerId: string): void;

@@ -1,3 +1,3 @@
-import { initGameServer } from './game/game-server';
+import { initGameServer } from "./game/game-server";
 
 initGameServer(3001);

@@ -3,8 +3,9 @@ import { trait } from "koota";
 import { Camera, PerspectiveCamera, Vector2, type Mesh } from "three";
 
 //#region Entity Traits
-export const NetworkAuthority = trait({
-  user: "",
+export const NetworkIdentity = trait({
+  id: "",
+  owner: "",
 });
 
 export const RigidBodyRef = trait<{ ref: RapierRigidBody }>({
@@ -14,6 +15,7 @@ export const RigidBodyRef = trait<{ ref: RapierRigidBody }>({
 export const MeshRef = trait<{ ref: Mesh }>({
   ref: null!,
 });
+
 
 export const Flippable = trait({
   flipped: false,

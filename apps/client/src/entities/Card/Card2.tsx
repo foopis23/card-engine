@@ -12,7 +12,7 @@ import { getUserId } from "../../util/userId";
 import { useActions } from "koota/react";
 import type { Entity } from "koota";
 import { Holdable, MeshRef, RigidBodyRef } from "../../ecs/traits";
-import { actions } from "../../ecs";
+import { actions } from "../../ecs/actions";
 
 export type CardProps = {
   entity: Entity;

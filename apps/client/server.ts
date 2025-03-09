@@ -15,7 +15,7 @@ Bun.serve({
   static: {
     "/": indexHtml,
   },
-  async fetch(req, serv) {
+  async fetch(req) {
     const url = new URL(req.url);
     let response: Response = new Response(null, { status: 404 });
 
@@ -29,7 +29,7 @@ Bun.serve({
           "Content-Type": file.type,
         },
       });
-    } catch (e) {
+    } catch {
       response = new Response(null, { status: 404 });
     }
 

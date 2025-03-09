@@ -6,12 +6,20 @@ import { destroyCard, spawnCard, updateOwner } from "./ecs/actions";
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = 'ws://localhost:3001';
 
+let host = false;
+export function setHost(value: boolean) {
+  host = value;
+}
+
+
 export type Events = {
   updatePos: (networkId: string, pos: { x: number, y: number, z: number }) => void;
   updateFlip: (networkId: string, flipped: boolean) => void;
   spawnCard: (networkIdentity: { id: string, owner: string }) => void,
   destroyCard: (entityId: string) => void,
   updateOwner: (entityId: string, owner: string) => void,
+  requestSyncState: () => void,
+  syncState: (state: ({ networkIdentity: { id: string, owner: string } })[]) => void,
 }
 
 export type ClientGameSocket = Socket<
@@ -66,4 +74,30 @@ socket.on("updateOwner", (entityId: string, owner: string) => {
   }
 
   updateOwner(world, entity, owner);
+});
+
+socket.on("syncState", (state) => {
+  // existing network identities
+  const ids = new Set();
+  world.query(NetworkIdentity).forEach((entity) => {
+    ids.add(entity.get(NetworkIdentity)!.id);
+  });
+
+  // new network identities
+  state.forEach(({ networkIdentity }) => {
+    if (!ids.has(networkIdentity.id)) {
+      spawnCard(world, networkIdentity);
+    }
+  });
+});
+
+socket.on("requestSyncState", () => {
+  if (host) {
+    const state = world.query(NetworkIdentity)
+      .map(entity => {
+        const networkIdentity = entity.get(NetworkIdentity)!;
+        return { networkIdentity };
+      });
+    socket.emit("syncState", state);
+  }
 });

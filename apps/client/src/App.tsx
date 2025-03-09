@@ -6,15 +6,29 @@ import Game from "./Game";
 import { WorldProvider } from "koota/react";
 import { world } from "./ecs";
 import { Button } from "./components/ui/button";
+import { setHost, socket } from "./socket";
 
 function App() {
   const [lobby, setLobby] = useState(false);
+
+  function join() {
+    setLobby(true);
+    setHost(false);
+    socket.emit("requestSyncState");
+  }
+
+  function host() {
+    setLobby(true);
+    setHost(true);
+  }
+
   if (!lobby) {
     return (
       <div className="flex h-full w-full justify-center items-center">
         <div className="flex flex-col space-y-4">
           <h1 className="text-3xl">Card Engine</h1>
-          <Button onClick={() => setLobby(true)}>Host</Button>
+          <Button onClick={host}>Host</Button>
+          <Button onClick={join}>Join</Button>
         </div>
       </div>
     )
